@@ -1,0 +1,9 @@
+yfinance
+pdfplumber
+Wand
+ghostscript 
+pandas_profiling
+ipywidgets
+jupyterlab
+plotly
+ipydatetime

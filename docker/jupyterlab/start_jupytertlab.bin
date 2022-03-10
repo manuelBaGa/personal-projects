@@ -1,0 +1,1 @@
+docker run --rm -p 8888:8888 --expose=8888 -e DOCKER_STACKS_JUPYTER_CMD=lab -e GRANT_SUDO=yes -v "${PWD}"/jupyter_notebooks:/home/jovyan/notebooks  jupyterlab:latest  

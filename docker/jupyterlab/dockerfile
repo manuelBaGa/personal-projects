@@ -1,0 +1,11 @@
+FROM jupyter/base-notebook
+
+USER root
+
+RUN apt-get update && apt-get install -y imagemagick ghostscript
+
+COPY requirements.txt .
+
+RUN  pip install -r requirements.txt
+
+RUN sed -i 's/rights="none" pattern="PDF"/rights="read | write" pattern="PDF"/g' /etc/ImageMagick-6/policy.xml
