@@ -1,3 +1,4 @@
+from textwrap import indent
 import scrapy
 import re
 import json
@@ -8,26 +9,28 @@ import os
 
 class QuotesSpider(scrapy.Spider):
     name = "quotes"
-    
     def start_requests(self):
-        tickers = ['GOOGL']
+        tickers = ['GOOGL','V','AMZN']
         ticker_data={}
+        data_directory='C:\\Users\\mabalder\\Desktop\\code_projects\\Projects\\jupyterlab\\jupyter_notebooks\\Data\\fundamental_analysis\\ticker_ratios\\'
+
         for ticker in tickers:
             ticker_data[ticker]={}
             ratio_url='http://financials.morningstar.com/finan/financials/getKeyStatPart.html?&t='+ticker+'&region=usa&culture=en-US'
             metric_url='http://financials.morningstar.com/valuate/current-valuation-list.action?=&t='+ticker
             
             ratios=scrapy.Request(url=ratio_url, callback=self.parse_ratios,cb_kwargs=dict(ticker_name=ticker))
-            #ticker_data[ticker]['ratios']=yield scrapy.Request(url=ratio_url, callback=self.parse_ratios) #, cb_kwargs=dict(ticker_name=ticker))         
+            ticker_data[ticker]['ratios']=yield scrapy.Request(url=ratio_url, callback=self.parse_ratios) #, cb_kwargs=dict(ticker_name=ticker))         
             #print(ticker_data[ticker]['ratios'])
-            #ticker_data[ticker]['metrics']=yield scrapy.Request(url=metric_url, callback=self.parse_metrics) #, cb_kwargs=dict(ticker_name=ticker))
+            ticker_data[ticker]['metrics']=yield scrapy.Request(url=metric_url, callback=self.parse_metrics) #, cb_kwargs=dict(ticker_name=ticker))
             #print(ticker_data[ticker]['metrics'])
             #yield scrapy.Request(url=ratio_url, callback=self.parse_metrics(ticker))
             #Creating json files to store ratios
-
+            with open(data_directory+ticker+'.json', 'w') as fp:
+                json.dump(ticker_data, fp,indent=4)
             yield ratios
 
-    def parse_ratios(self, response, ticker_name):
+    def parse_ratios(self, response):
         ratios_dict={}
         #Extracting tickers name from the response url
         #ticker_name=ticker_name#re.split("=|&",response.url)[2]
@@ -38,12 +41,12 @@ class QuotesSpider(scrapy.Spider):
             name_sq=ratio_name.replace('\'','')
             ratios_dict[name_sq]=response.xpath(f"//th[text()='{name_sq}']/../td[last()]/text()").get()
 
-        data_directory='C:\\Users\\mabalder\\Desktop\\code_projects\\Projects\\jupyterlab\\jupyter_notebooks\\Data\\fundamental_analysis\\ticker_ratios\\'
-        json_file=open(data_directory+ticker_name+".json","w")
-        #temporal_file=open(os.getcwd()+'\\scrapped_data\\'+ticker_name+".json","w")
+        #data_directory='C:\\Users\\mabalder\\Desktop\\code_projects\\Projects\\jupyterlab\\jupyter_notebooks\\Data\\fundamental_analysis\\ticker_ratios\\'
         
-        json.dump(ratios_dict,json_file) 
-          
+        #with open(data_directory+ticker_name+'.json', 'w') as fp:
+        #        json.dump(ratios_dict, fp,indent=4)
+
+
         yield ratios_dict
         
     def parse_metrics(self, response):
