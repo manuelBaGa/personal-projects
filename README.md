@@ -1,2 +1,2 @@
 # personal-projects
-This repository contains all projects that I had develop as personal interest. 
+This repository contains all projects that I had developed as personal interest. 
