@@ -1,3 +1,4 @@
 *.log
 selenium_practice.py
 settings.json
+jupyter-notebooks/Data
